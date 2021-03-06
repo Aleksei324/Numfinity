@@ -6,30 +6,14 @@ class Numfinity:
     negative = False
     original = 0.0
 
-    def __init__(self, number):
+    def __init__(self, negativeSign, integral, decimal):
         """Create an Numfinity object."""
-        self.changeValue(number)
-
-    def changeValue(self, number):
-        """
-        (float) -> Numfinity
-        Change the value to another number.
-        The integral and decimal part is limited to 15 digits.
-        Use changeValueByParts to use more digits.
-        """
-        self.integralPart = Numfinity.convertNumber(str(
-            int(number))[-15:], False)
-        self.decimalPart = Numfinity.convertNumber(str(
-            float(number - int(number)))[2:15], True)
-
-        self.negative = Numfinity.determineSign(number)
-        self.original = number
-
-        return self
+        self.changeValueByParts(negativeSign, integral, decimal)
 
     def changeValueByParts(self, negativeSign, integral, decimal):
         """
         (bool, str, str) -> Numfinity
+        Prerequisites: no empty strings
         Use an integral and decimal individual part to change the value.
         """
         self.integralPart = Numfinity.convertNumber(integral, False)
@@ -44,6 +28,23 @@ class Numfinity:
 
         return self
 
+    def changeValue(self, number):
+        """
+        (float) -> Numfinity
+        Change the value to another number.
+        The integral and decimal part is limited to 15 digits each one.
+        Use changeValueByParts to use more digits.
+        """
+        self.integralPart = Numfinity.convertNumber(str(
+            int(number))[-15:], False)
+        self.decimalPart = Numfinity.convertNumber(str(
+            float(number - int(number)))[2:15], True)
+
+        self.negative = Numfinity.determineSign(number)
+        self.original = number
+
+        return self
+
     @staticmethod
     def convertNumber(number, decimalMode):
         """
@@ -52,10 +53,10 @@ class Numfinity:
         """
         converted = []
 
-        # if the number is negative
-        if number[0] == "-":
-            # remove the negative sign
-            number[:] = number[1:]
+        # if the number is negative or it has invalid values (.)
+        if number[0] == "-" or number[0] == ".":
+            # remove it
+            number = number[1:]
 
         # Identify how many elements will be stored in the list
         numItems = len(number) / 15
@@ -76,7 +77,7 @@ class Numfinity:
                 for counter in range(int(numItems) + 1):
                     # Get the respective item based on the digits and add it
                     converted.insert(0, number[
-                        (counter * -15) - 15:(counter * -15) - 1])
+                        (counter * -15) - 15:len(number) - (counter * 15)])
 
         return converted
 
