@@ -29,13 +29,21 @@ class Numfinity:
     def changeValueByParts(self, negativeSign, integral, decimal):
         """
         (bool, str, str) -> Numfinity
-        Prerequisites: no empty strings
         Use an integral and decimal individual part to change the value.
+        Empty strings are equal to "0"
         """
+        # Support to empty strings
+        if integral == "":
+            integral = "0"
+        if decimal == "":
+            decimal = "0"
+
         self.integralPart = Numfinity.convertNumber(integral, False)
         self.decimalPart = Numfinity.convertNumber(decimal, True)
 
+        # If the final value equal to 0.0 (str may have more zeros)
         if float(self) == 0.0:
+            # remove the negative sign
             self.negative = False
         else:
             self.negative = negativeSign

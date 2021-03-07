@@ -11,6 +11,12 @@ class TestNumfinity(unittest.TestCase):
         expected = "0.0"
         self.assertEqual(expected, actual)
 
+    def testEmptyStrings(self):
+        """Test Numfinity with empty strings."""
+        actual = str(nf(True, "", ""))
+        expected = "0.0"
+        self.assertEqual(expected, actual)
+
     def testChangeValueByParts(self):
         """Testing the change of values."""
         actual = nf(False, "1", "1")
