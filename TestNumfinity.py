@@ -2,11 +2,11 @@ from Numfinity import Numfinity as nf
 import unittest
 
 
-class TestInfiniteNumber(unittest.TestCase):
-    """docstring for TestInfiniteNumber."""
+class TestNumfinity(unittest.TestCase):
+    """Test the Python 3 version of Numfinity."""
 
     def testNegativeZero(self):
-        """Test InfiniteNumber with zero and if it deletes the '-'."""
+        """Test Numfinity with zero and if it deletes the '-'."""
         actual = str(nf(True, "0", "0"))
         expected = "0.0"
         self.assertEqual(expected, actual)
@@ -51,6 +51,13 @@ class TestInfiniteNumber(unittest.TestCase):
         otherObject = nf(False, "5", "0")
         actual = object.changeValue(5.0) == otherObject
         expected = True
+        self.assertAlmostEqual(expected, actual)
+
+    def testOriginalAtribute(self):
+        """Test if the original atribute is saved correctly."""
+        object = nf(False, "54321", "12345")
+        actual = object.original
+        expected = 54321.12345
         self.assertAlmostEqual(expected, actual)
 
 
