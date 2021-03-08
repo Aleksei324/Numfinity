@@ -6,4 +6,4 @@ When the Python 3 version is finished (or at least functional) I plan to transcr
 
 ## How to use
 
-**Python 3:** Download the file "Numfinity.py" and import it using `from Numfinity import Numfinity`
+**Python 3:** Download the file "Numfinity.py" and import it using `from Numfinity import Numfinity`.

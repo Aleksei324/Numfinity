@@ -17,17 +17,41 @@ class TestNumfinity(unittest.TestCase):
         expected = "0.0"
         self.assertEqual(expected, actual)
 
-    def testChangeValueByParts(self):
+    def testNoParameters(self):
+        """Test Numfinity with no parameters."""
+        actual = str(nf())
+        expected = "0.0"
+        self.assertEqual(expected, actual)
+
+    def testSomeParameters(self):
+        """Test Numfinity with some parameters."""
+        actual = str(nf(True, "1"))
+        expected = "-1.0"
+        self.assertEqual(expected, actual)
+
+    def testInvalidParameters(self):
+        """Test Numfinity with invalid parameters."""
+        actual = False
+
+        try:
+            nf(True, "1.1", "1")
+        except AssertionError:
+            actual = True
+
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def testChangeValueByPart(self):
         """Testing the change of values."""
         actual = nf(False, "1", "1")
-        actual = str(actual.changeValueByParts(True, "321", "123"))
+        actual = str(actual.changeValueByPart(True, "321", "123"))
         expected = "-321.123"
         self.assertEqual(expected, actual)
 
-    def testChangeValueByPartsLargeValues(self):
+    def testChangeValueByPartLargeValues(self):
         """Testing the change of values with large values."""
         actual = nf(False, "09876543210987654321", "12345678901234567890")
-        actual = str(actual.changeValueByParts(
+        actual = str(actual.changeValueByPart(
             True,
             "110100900800700600500400300200100",
             "00100200300400500600700800900100110"))
@@ -64,7 +88,7 @@ class TestNumfinity(unittest.TestCase):
         object = nf(False, "54321", "12345")
         actual = object.original
         expected = 54321.12345
-        self.assertAlmostEqual(expected, actual)
+        self.assertEqual(expected, actual)
 
 
 if __name__ == "__main__":

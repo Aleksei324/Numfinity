@@ -22,21 +22,28 @@ class Numfinity:
     negative = False
     original = 0.0
 
-    def __init__(self, negativeSign, integral, decimal):
+    def __init__(self, negativeSign=False, integral="0", decimal="0"):
         """Create an Numfinity object."""
-        self.changeValueByParts(negativeSign, integral, decimal)
+        self.changeValueByPart(negativeSign, integral, decimal)
 
-    def changeValueByParts(self, negativeSign, integral, decimal):
+    def changeValueByPart(self, negativeSign=False, integral="0", decimal="0"):
         """
         (bool, str, str) -> Numfinity
+        precondition: The Strings can only contain numbers, no dot nor sign.
         Use an integral and decimal individual part to change the value.
-        Empty strings are equal to "0"
+        Empty strings are equal to "0".
         """
         # Support to empty strings
         if integral == "":
             integral = "0"
         if decimal == "":
             decimal = "0"
+
+        # To ensure that preconditions are met.
+        for char in integral:
+            assert integral.isdigit(), "{} is invalid.".format(integral)
+        for char in decimal:
+            assert decimal.isdigit(), "{} is invalid.".format(decimal)
 
         self.integralPart = Numfinity.convertNumber(integral, False)
         self.decimalPart = Numfinity.convertNumber(decimal, True)
@@ -52,7 +59,7 @@ class Numfinity:
 
         return self
 
-    def changeValue(self, number):
+    def changeValue(self, number=0.0):
         """
         (float) -> Numfinity
         Change the value to another number.
