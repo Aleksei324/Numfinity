@@ -210,28 +210,35 @@ class Numfinity:
                     convertedIntegral, convertedDecimal, other.
                     integralPart, self.integralPart, 0)
 
+            # If both list have the same quantity of elements
             else:
+                # Sum it with this special method
                 Numfinity.sumIntegralNumfinitySameSignSameSize(
                     convertedIntegral, convertedDecimal, self.
                     integralPart, other.integralPart)
 
             # DECIMAL PART - - -
 
+            # If the first object has more elements
             if len(self.decimalPart) > len(other.decimalPart):
                 Numfinity.sumDecimalNumfinitySameSign(
                     convertedDecimal, convertedIntegral, self.
                     decimalpart, other.decimalPart, 0)
 
+            # If the second object has more elements
             elif len(self.decimalPart) < len(other.decimalPart):
                 Numfinity.sumDecimalNumfinitySameSign(
                     convertedDecimal, convertedIntegral, other.
                     decimalPart, self.decimalPart, 0)
 
+            # If both list have the same quantity of elements
             else:
+                # Sum it with this special method
                 Numfinity.sumDecimalNumfinitySameSignSameSize(
                     convertedDecimal, convertedIntegral, self.
                     decimalPart, other.decimalPart)
 
+            # Create a new object with the sum
             newNumfinityObject = Numfinity()
             newNumfinityObject.integralPart = convertedIntegral
             newNumfinityObject.decimalPart = convertedDecimal
@@ -258,11 +265,11 @@ class Numfinity:
             # Ignore the loop if the index is bigger
             if index > i:
                 continue
+
             # If the smaller list have only zeros
             if smaller[i] == "000000000000000":
-                # create a new element at the start and add the residual
-                convertedIntegral[i] = str(int(bigger[i]
-                                               ) // (10**15))
+                # Add the residual
+                convertedIntegral[i] = str(int(bigger[i]) // (10**15))
 
             else:
                 # Add the residual to the element at the left
@@ -270,10 +277,11 @@ class Numfinity:
                     bigger[i]) + int(smaller[i])) // (10**15))
                     + int(convertedIntegral[i - 1]))
 
-            # Sum the values until 15 digits
+            # Always sum the values until 15 digits
             convertedIntegral[i] = str(int(bigger[i]) + int(
                 smaller[i]))[-15:]
 
+        # Remove the zeros
         for i in range(len(smaller) - 1):
             if smaller[i] == "000000000000000":
                 smaller.pop(i)
@@ -289,18 +297,19 @@ class Numfinity:
         """
         for i, stringElement in enumerate(list1):
 
-            if i == len(list2):
-                break
-
-            elif stringElement > list2[i]:
+            # If the element's number of list1 is bigger
+            if stringElement > list2[i]:
                 Numfinity.sumIntegralNumfinitySameSign(
                     convertedIntegral, convertedDecimal, list1, list2, i)
 
+            # If the element's number of list1 is smaller
             elif stringElement < list2[i]:
                 Numfinity.sumIntegralNumfinitySameSign(
                     convertedIntegral, convertedDecimal, list2, list1, i)
 
+            # If both are equal
             else:
+                # If there are no more elements at the left
                 if i - 1 == -1:
                     # create a new element and add the residual
                     convertedIntegral.insert(0, str(
@@ -311,7 +320,7 @@ class Numfinity:
                     convertedIntegral[i - 1] = str(((2 * int(list1[i])) // (
                         10**15)) + int(convertedIntegral[i - 1]))
 
-                # Sum the values until 15 digits
+                # Always Sum the values until 15 digits
                 convertedIntegral[i] = str(2 * int(
                     list1[i]))[-15:]
 
@@ -333,7 +342,8 @@ class Numfinity:
             # Skip if the index is not the correct
             if index > i:
                 continue
-            # If there is no more elements at the left
+
+            # If there are no more elements at the left
             if i - 1 == -1:
                 # Add the residual to the last element of the integrals
                 convertedIntegral[-1] = str(((int(bigger[i]) + int(
@@ -343,11 +353,6 @@ class Numfinity:
                 # Sum the values until 15 digits
                 convertedDecimal[i] = str(int(bigger[i]) + int(
                     smaller[i]))[-15:]
-
-            # If there are no more elements in the smaller list
-            elif i + 1 == len(smaller):
-                # just append it
-                convertedDecimal.append(bigger[i])
 
             else:
                 # add the residual to the element at the left
@@ -375,20 +380,21 @@ class Numfinity:
         """
         for i, stringElement in enumerate(list1):
 
-            if i == len(list2):
-                break
-
-            elif stringElement > list2[i]:
+            # If the element's number of list1 is bigger
+            if stringElement > list2[i]:
                 Numfinity.sumDecimalNumfinitySameSign(
                     convertedDecimal, convertedIntegral, list1, list2, i)
 
+            # If the element's number of list1 is smaller
             elif stringElement < list2[i]:
                 Numfinity.sumDecimalNumfinitySameSign(
                     convertedDecimal, convertedIntegral, list2, list1, i)
 
+            # If both are equal
             else:
+                # If there are no more elements at the left
                 if i - 1 == -1:
-                    # Add the residual
+                    # Add the residual + the value in integral[-1]
                     convertedIntegral[-1] = str(((2 * int(list1[i])) // (
                         10**15)) + int(convertedIntegral[-1]))
 
@@ -397,6 +403,6 @@ class Numfinity:
                     convertedDecimal[i - 1] = str(((2 * int(
                         list1[i])) // (10**15)) + int(convertedDecimal[i - 1]))
 
-                # Sum the values until 15 digits
+                # Always sum the values until 15 digits
                 convertedDecimal[i] = str(2 * int(
                     list1[i]))[-15:]
