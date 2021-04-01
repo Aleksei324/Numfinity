@@ -116,20 +116,43 @@ class TestNumfinity(unittest.TestCase):
         expected = 54321.12345
         self.assertEqual(expected, actual)
 
-    def testSumPlusPlus(self):
-        """Test if the sum of 2 positive objects is done correctly."""
+    def testSumZero(self):
+        """Test if 0 + 0 is done correctly."""
+        object = nf()
+        otherObject = nf()
+        actual = str(object + otherObject)
+        expected = "0.0"
+        self.assertEqual(expected, actual)
+
+    def testSumNumfinity(self):
+        """Test if the sum of 2 objects is done correctly."""
         object = nf(False, "54321", "12345")
         otherObject = nf(False, "12345", "54321")
-        actual = str(object.__sum__(otherObject))
+        actual = str(object + otherObject)
         expected = "66666.66666"
         self.assertEqual(expected, actual)
 
-    def testSumPlusPlusLargeValues(self):
-        """Test if the sum of 2 positive large objects is done correctly."""
-        object = nf(False, "6543210987654321", "1234567890123456")
-        otherObject = nf(False, "1234567000123456", "6543210007654321")
-        actual = str(object.__sum__(otherObject))
-        expected = "7777777987777777.7777777897777777"
+    def testSumNegativeNumfinity(self):
+        """Test if the sum of 2 negative objects is done correctly."""
+        object = nf(True, "54321", "12345")
+        otherObject = nf(True, "12345", "54321")
+        actual = str(object + otherObject)
+        expected = "-66666.66666"
+        self.assertEqual(expected, actual)
+
+    def testSumNumfinityLargeValues(self):
+        """Test if the sum of 2 large objects is done correctly."""
+        object = nf(False, "543210987654321", "123456789012345")
+        otherObject = nf(False, "511111011111111", "1111111101111111")
+        actual = str(object + otherObject)
+        expected = "1054321998765432.2345678991234561"
+        self.assertEqual(expected, actual)
+
+    def testSumFloat(self):
+        """Test if the sum of 2 objects is done correctly."""
+        object = nf(False, "54321", "12345")
+        actual = str(object + 12345.54321)
+        expected = "66666.66666"
         self.assertEqual(expected, actual)
 
 
