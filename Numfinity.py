@@ -45,8 +45,8 @@ class Numfinity:
         for char in decimal:
             assert decimal.isdigit(), "{} is invalid.".format(decimal)
 
-        self.integralPart = Numfinity.convertNumber(integral, False)
-        self.decimalPart = Numfinity.convertNumber(decimal, True)
+        self.integralPart = Numfinity.convertNumber_(integral, False)
+        self.decimalPart = Numfinity.convertNumber_(decimal, True)
 
         # If the final value equal to 0.0 (str may have more zeros)
         if float(self) == 0.0:
@@ -68,16 +68,16 @@ class Numfinity:
         number = float(number)
         splitNumber = str(number).split(".")
 
-        self.integralPart = Numfinity.convertNumber(splitNumber[0], False)
-        self.decimalPart = Numfinity.convertNumber(splitNumber[1], True)
+        self.integralPart = Numfinity.convertNumber_(splitNumber[0], False)
+        self.decimalPart = Numfinity.convertNumber_(splitNumber[1], True)
 
-        self.negative = Numfinity.determineSign(number)
+        self.negative = Numfinity.determineSign_(number)
         self.original = number
 
         return self
 
     @staticmethod
-    def convertNumber(number, decimalMode):
+    def convertNumber_(number, decimalMode):
         """
         (str, bool) -> list
         Store number sections in a list.
@@ -113,7 +113,7 @@ class Numfinity:
         return converted
 
     @staticmethod
-    def determineSign(number):
+    def determineSign_(number):
         """
         (float) -> bool
         Autodetermine the number sign.
@@ -158,251 +158,223 @@ class Numfinity:
         """
         return str(self) == str(other)
 
-    def __sum__(self, other):
+    def __add__(self, other):
         """
         (Numfinity, ?) -> Numfinity
         Sum 2 objects. (WIP)
         """
         if isinstance(other, Numfinity):
-            return Numfinity.sumNumfinity(self, other)
+            # Make compatible both Numfinity objects
+            self.preparingOperation_(other)
+
+            result = self.sumNumfinity_(other)
+
+            # Clean both objects
+            self.removeExtraZeros_()
+            other.removeExtraZeros_()
+
+            # It could have empty elements so I add zeros to fill those
+            result.fillWithZeros_()
+
+            return result
 
         elif isinstance(other, float):
-            return NotImplemented  # TODO: support for floats
+            # convert float to Numfinity object.
+            newOther = Numfinity()
+            newOther.changeValue(other)
+
+            # Make compatible both Numfinity objects
+            self.preparingOperation_(newOther)
+
+            result = self.sumNumfinity_(newOther)
+
+            # Clean both objects
+            self.removeExtraZeros_()
+            newOther.removeExtraZeros_()
+
+            # It could have empty elements so I add zeros to fill those
+            result.fillWithZeros_()
+
+            return result
 
         else:
             return NotImplemented
 
-    @ staticmethod
-    def sumNumfinity(self, other):
+    def __sub__(self, other):
+        """
+        (Numfinity, ?) -> Numfinity
+        substract 2 objects. (WIP)
+        """
+        if isinstance(other, Numfinity):
+            return NotImplemented  # TODO: support for this
+
+        elif isinstance(other, float):
+            return NotImplemented  # TODO: support for this
+
+        else:
+            return NotImplemented
+
+    def __mul__(self, other):
+        """
+        (Numfinity, ?) -> Numfinity
+        multiply 2 objects. (WIP)
+        """
+        if isinstance(other, Numfinity):
+            return NotImplemented  # TODO: support for this
+
+        elif isinstance(other, float):
+            return NotImplemented  # TODO: support for this
+
+        else:
+            return NotImplemented
+
+    def __div__(self, other):
+        """
+        (Numfinity, ?) -> Numfinity
+        divide 2 objects. (WIP)
+        """
+        if isinstance(other, Numfinity):
+            return NotImplemented  # TODO: support for this
+
+        elif isinstance(other, float):
+            return NotImplemented  # TODO: support for this
+
+        else:
+            return NotImplemented
+
+    def preparingOperation_(self, other):
+        """
+        (Numfinity, Numfinity) -> none
+        Make compatible both Numfinity objects.
+        Fix the length of 2 Numfinity objects.
+        """
+        # If the 2 objects have different length, fix it
+        while len(self.integralPart) < len(other.integralPart):
+            self.integralPart.insert(0, "000000000000000")
+        while len(self.integralPart) > len(other.integralPart):
+            other.integralPart.insert(0, "000000000000000")
+
+        while len(self.decimalPart) < len(other.decimalPart):
+            self.decimalPart.append("000000000000000")
+        while len(self.decimalPart) > len(other.decimalPart):
+            other.decimalPart.append("000000000000000")
+
+    def sumNumfinity_(self, other):
         """
         (Numfinity, Numfinity) -> Numfinity
-        Sum 2 Numfinity objects.
+        Sum 2 Numfinity objects
         """
-        # Store the added values
-        convertedIntegral = self.integralPart
-        convertedDecimal = self.decimalPart
+        resultingSign = False
+        # A list with both the integral and decimal part
+        resultingList = []
+        # It have on purpose +1 index to do less operations in the future
+        referenceIndex = len(self.integralPart)
 
-        # INTEGRAL PART - - -
+        # if positive + positive
+        if not(self.negative) and not(other.negative):
+            resultingList, referenceIndex = self.sumModule_(
+                other, referenceIndex)
 
-        # If the second value is negative
-        if not(self.negative) and other.negative:
-            pass  # TODO: This (Maybe I could call the __sub__)
+        # if negative + negative
+        elif self.negative and other.negative:
+            resultingSign = True
+            resultingList, referenceIndex = self.sumModule_(
+                other, referenceIndex)
 
-        # If the first value is negative
-        elif self.negative and not(other.negative):
-            pass  # TODO: This (Maybe I could call the __sub__)
+        # if positive + negative
+        elif not(self.negative) and not(other.negative):
+            # TODO: this - - - - -
+            pass
 
-        # If both sign are equal
-        elif self.negative and other.negative or not(
-                self.negative) and not(other.negative):
+        # if negative + positive
+        else:
+            resultingSign = True
+            # TODO: this - - - - -
+            pass
 
-            # If the first object has more elements
-            if len(self.integralPart) > len(other.integralPart):
-                # Sum it
-                Numfinity.sumIntegralNumfinitySameSign(
-                    convertedIntegral, convertedDecimal, self.
-                    integralpart, other.integralPart, 0)
+        result = Numfinity()
+        result.negative = resultingSign
+        result.integralPart = resultingList[:referenceIndex]
+        result.decimalPart = resultingList[referenceIndex:]
+        result.original = float(result)
 
-            # If the second object has more elements
-            elif len(self.integralPart) < len(other.integralPart):
-                # Sum it
-                Numfinity.sumIntegralNumfinitySameSign(
-                    convertedIntegral, convertedDecimal, other.
-                    integralPart, self.integralPart, 0)
+        return result
 
-            # If both list have the same quantity of elements
-            else:
-                # Sum it with this special method
-                Numfinity.sumIntegralNumfinitySameSignSameSize(
-                    convertedIntegral, convertedDecimal, self.
-                    integralPart, other.integralPart)
-
-            # DECIMAL PART - - -
-
-            # If the first object has more elements
-            if len(self.decimalPart) > len(other.decimalPart):
-                Numfinity.sumDecimalNumfinitySameSign(
-                    convertedDecimal, convertedIntegral, self.
-                    decimalpart, other.decimalPart, 0)
-
-            # If the second object has more elements
-            elif len(self.decimalPart) < len(other.decimalPart):
-                Numfinity.sumDecimalNumfinitySameSign(
-                    convertedDecimal, convertedIntegral, other.
-                    decimalPart, self.decimalPart, 0)
-
-            # If both list have the same quantity of elements
-            else:
-                # Sum it with this special method
-                Numfinity.sumDecimalNumfinitySameSignSameSize(
-                    convertedDecimal, convertedIntegral, self.
-                    decimalPart, other.decimalPart)
-
-            # Create a new object with the sum
-            newNumfinityObject = Numfinity()
-            newNumfinityObject.integralPart = convertedIntegral
-            newNumfinityObject.decimalPart = convertedDecimal
-            newNumfinityObject.negative = self.negative
-            newNumfinityObject.original = float(newNumfinityObject)
-
-            return newNumfinityObject
-
-    # INTEGRAL - - -
-
-    @ staticmethod
-    def sumIntegralNumfinitySameSign(
-            convertedIntegral, convertedDecimal, bigger, smaller, index):
+    def sumModule_(self, other, referenceIndex):
         """
-        (list, list, list) -> None
-        A method to avoid repeating code in __sum__
+        (Numfinity, Numfinity, int) -> List, int
+        Create a list with the sum, update the reference index if needed.
+        (there is no need for the reference index here when substracting)
         """
-        # To have both list with equal size
-        for counter in range(len(bigger)):
-            if len(bigger) > len(smaller):
-                smaller.insert(0, "000000000000000")
+        # Mix both lists
+        selfList = self.integralPart
+        selfList.extend(self.decimalPart)
 
-        for i in range(len(bigger)):
-            # Ignore the loop if the index is bigger
-            if index > i:
-                continue
+        # Mix both lists
+        otherList = other.integralPart
+        otherList.extend(other.decimalPart)
 
-            # If the smaller list have only zeros
-            if smaller[i] == "000000000000000":
-                # Add the residual
-                convertedIntegral[i] = str(int(bigger[i]) // (10**15))
+        sum = ""
 
-            else:
-                # Add the residual to the element at the left
-                convertedIntegral[i - 1] = str(((int(
-                    bigger[i]) + int(smaller[i])) // (10**15))
-                    + int(convertedIntegral[i - 1]))
+        # Create a new empty list
+        result = []
+        # Fill it with zeros
+        for count in range(len(selfList)):
+            result.append("0")
 
-            # Always sum the values until 15 digits
-            convertedIntegral[i] = str(int(bigger[i]) + int(
-                smaller[i]))[-15:]
+        # Get the index, starting from the last element
+        # (result will be modified, so is better to use selfList)
+        for index in range(len(selfList) - 1, -1, -1):
 
-        # Remove the zeros
-        for i in range(len(smaller) - 1):
-            if smaller[i] == "000000000000000":
-                smaller.pop(i)
-            else:
-                break
+            # sum both elements of each list
+            sum = str(int(selfList[index]) + int(otherList[index]))
 
-    @ staticmethod
-    def sumIntegralNumfinitySameSignSameSize(
-            convertedIntegral, convertedDecimal, list1, list2):
+            # store it (only the last 15 digits)
+            result[index] = str(int(result[index]) + int(sum[-15:]))
+
+            # If the sum was bigger than the element capacity
+            # and it's the last index
+            if index == 0 and len(sum) > 15:
+                # store it correctly
+                result.insert(0, sum[:-14])
+                referenceIndex += 1
+
+            # If the sum was bigger than the element capacity
+            elif len(sum) > 15:
+                # store it correctly
+                result[index - 1] = str(int(result[index - 1]
+                                            ) + int(sum[:-14]))
+
+        return result, referenceIndex
+
+    def fillWithZeros_(self):
         """
-        (list, list, list) -> None
-        A method to avoid repeating code in __sum__
+        (Numfinity) -> none
+        Insert zeros when needed.
         """
-        for i, stringElement in enumerate(list1):
+        for index in range(len(self.integralPart) - 1):
+            if index != 0:
+                self.integralPart[index] = ("000000000000000" +
+                                            self.integralPart[index])[-15:]
 
-            # If the element's number of list1 is bigger
-            if stringElement > list2[i]:
-                Numfinity.sumIntegralNumfinitySameSign(
-                    convertedIntegral, convertedDecimal, list1, list2, i)
+        for index in range(len(self.decimalPart) - 1, -1, -1):
+            if index != len(self.decimalPart) - 1:
+                self.decimalPart[index] = ("000000000000000" +
+                                           self.decimalPart[index])[-15:]
 
-            # If the element's number of list1 is smaller
-            elif stringElement < list2[i]:
-                Numfinity.sumIntegralNumfinitySameSign(
-                    convertedIntegral, convertedDecimal, list2, list1, i)
-
-            # If both are equal
-            else:
-                # If there are no more elements at the left
-                if i - 1 == -1:
-                    # create a new element and add the residual
-                    convertedIntegral.insert(0, str(
-                        (2 * int(list1[i])) // (10**15)))
-
-                else:
-                    # Add the residual to the element at the left
-                    convertedIntegral[i - 1] = str(((2 * int(list1[i])) // (
-                        10**15)) + int(convertedIntegral[i - 1]))
-
-                # Always Sum the values until 15 digits
-                convertedIntegral[i] = str(2 * int(
-                    list1[i]))[-15:]
-
-    # DECIMAL - - -
-
-    @ staticmethod
-    def sumDecimalNumfinitySameSign(
-            convertedDecimal, convertedIntegral, bigger, smaller, index):
+    def removeExtraZeros_(self):
         """
-        (list, list, list) -> None
-        A method to avoid repeating code in __sum__
+        (Numfinity) -> none
+        Remove innecesary zeros in a Numfinity object.
         """
-        # To have both list with equal size
-        for counter in range(len(bigger)):
-            if len(bigger) > len(smaller):
-                smaller.append("000000000000000")
-
-        for i in range(len(bigger)):
-            # Skip if the index is not the correct
-            if index > i:
-                continue
-
-            # If there are no more elements at the left
-            if i - 1 == -1:
-                # Add the residual to the last element of the integrals
-                convertedIntegral[-1] = str(((int(bigger[i]) + int(
-                    smaller[i])) // (10**15)) + int(
-                    convertedIntegral[-1]))
-
-                # Sum the values until 15 digits
-                convertedDecimal[i] = str(int(bigger[i]) + int(
-                    smaller[i]))[-15:]
-
-            else:
-                # add the residual to the element at the left
-                convertedDecimal[i - 1] = str((int(
-                    bigger[i]) + int(smaller[i]) // (10**15))
-                    + int(convertedDecimal[i - 1]))
-
-                # Sum the values until 15 digits
-                convertedDecimal[i] = str(int(bigger[i]) + int(
-                    smaller[i]))[-15:]
-
-        # remove the zeros until it reach the last element with values
-        for i in range(len(smaller) - 1, 0, -1):
-            if smaller[i] == "000000000000000":
-                smaller.pop(i)
+        for element in self.integralPart:
+            if element == "000000000000000":
+                self.integralPart.pop(0)
             else:
                 break
 
-    @staticmethod
-    def sumDecimalNumfinitySameSignSameSize(
-            convertedDecimal, convertedIntegral, list1, list2):
-        """
-        (list, list, list) -> None
-        A method to avoid repeating code in __sum__
-        """
-        for i, stringElement in enumerate(list1):
-
-            # If the element's number of list1 is bigger
-            if stringElement > list2[i]:
-                Numfinity.sumDecimalNumfinitySameSign(
-                    convertedDecimal, convertedIntegral, list1, list2, i)
-
-            # If the element's number of list1 is smaller
-            elif stringElement < list2[i]:
-                Numfinity.sumDecimalNumfinitySameSign(
-                    convertedDecimal, convertedIntegral, list2, list1, i)
-
-            # If both are equal
+        for index in range(len(self.decimalPart) - 1, -1, -1):
+            if self.decimalPart[index] == "000000000000000":
+                self.decimalPart.pop(index)
             else:
-                # If there are no more elements at the left
-                if i - 1 == -1:
-                    # Add the residual + the value in integral[-1]
-                    convertedIntegral[-1] = str(((2 * int(list1[i])) // (
-                        10**15)) + int(convertedIntegral[-1]))
-
-                else:
-                    # Add the residual to the element at the left
-                    convertedDecimal[i - 1] = str(((2 * int(
-                        list1[i])) // (10**15)) + int(convertedDecimal[i - 1]))
-
-                # Always sum the values until 15 digits
-                convertedDecimal[i] = str(2 * int(
-                    list1[i]))[-15:]
+                break
