@@ -179,7 +179,7 @@ class Numfinity:
 
             return result
 
-        elif isinstance(other, float):
+        elif isinstance(other, float) or isinstance(other, int):
             # convert float to Numfinity object.
             newOther = Numfinity()
             newOther.changeValue(other)
@@ -209,7 +209,7 @@ class Numfinity:
         if isinstance(other, Numfinity):
             return NotImplemented  # TODO: support for this
 
-        elif isinstance(other, float):
+        elif isinstance(other, float) or isinstance(other, int):
             return NotImplemented  # TODO: support for this
 
         else:
@@ -223,7 +223,7 @@ class Numfinity:
         if isinstance(other, Numfinity):
             return NotImplemented  # TODO: support for this
 
-        elif isinstance(other, float):
+        elif isinstance(other, float) or isinstance(other, int):
             return NotImplemented  # TODO: support for this
 
         else:
@@ -237,7 +237,7 @@ class Numfinity:
         if isinstance(other, Numfinity):
             return NotImplemented  # TODO: support for this
 
-        elif isinstance(other, float):
+        elif isinstance(other, float) or isinstance(other, int):
             return NotImplemented  # TODO: support for this
 
         else:

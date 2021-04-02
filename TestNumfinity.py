@@ -155,6 +155,13 @@ class TestNumfinity(unittest.TestCase):
         expected = "66666.66666"
         self.assertEqual(expected, actual)
 
+    def testSumInt(self):
+        """Test if the sum of 2 objects is done correctly."""
+        object = nf(False, "54321", "12345")
+        actual = str(object + 12345)
+        expected = "66666.12345"
+        self.assertEqual(expected, actual)
+
 
 if __name__ == "__main__":
     unittest.main(exit=False)
