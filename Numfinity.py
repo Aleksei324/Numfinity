@@ -64,6 +64,7 @@ class Numfinity:
         (float) -> Numfinity
         Change the value to another number.
         Use changeValueByPart for more accuracy.
+        Have support for int values.
         """
         number = float(number)
         splitNumber = str(number).split(".")
