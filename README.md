@@ -1,6 +1,6 @@
 # Numfinity
 
-A work in progress on a new type of variable that allows to store massive numbers.
+A work in progress of a a module for Python 3 with which you can create dynamically sized numbers; in other words, increase their maximum decimal or digit capacity to whatever is required.
 
 You can create Numfinity objects in two ways, the standard way by specifying the sign, integral and decimal part, or by using a float/double (depending on the language). For now you can only add values with equal sign, either add with another Numfinity object or with a float.
 
