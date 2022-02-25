@@ -4,20 +4,21 @@ class Numfinity:
     Copyright (C) 2021  Camilo Franco Moya
 
     This library is free software; you can redistribute it and/or
-	modify it under the terms of the GNU Lesser General Public
-	License as published by the Free Software Foundation; either
-	version 2.1 of the License, or (at your option) any later version.
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-	This library is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-	Lesser General Public License for more details.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
 
-	You should have received a copy of the GNU Lesser General Public
-	License along with this library; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
-	USA
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+    USA
     """
+
     # Atributes
     integralPart = ["0"]
     decimalPart = ["0"]
@@ -54,6 +55,9 @@ class Numfinity:
         if float(self) == 0.0:
             # remove the negative sign
             self.negative = False
+            # remove extra zeroes
+            self.integralPart = ["0"]
+            self.decimalPart = ["0"]
         else:
             self.negative = negativeSign
 
@@ -104,14 +108,14 @@ class Numfinity:
                 # count until all the items are added
                 for counter in range(int(numItems) + 1):
                     # Get the respective item based on the digits and add it
-                    converted.append(number[
-                        (counter * 15):(counter * 15) + 15])
+                    converted.append(number[(counter * 15) : (counter * 15) + 15])
             else:
                 # count until all the items are added
                 for counter in range(int(numItems) + 1):
                     # Get the respective item based on the digits and add it
-                    converted.insert(0, number[
-                        (counter * -15) - 15:len(number) - (counter * 15)])
+                    converted.insert(
+                        0, number[(counter * -15) - 15 : len(number) - (counter * 15)]
+                    )
 
         return converted
 
@@ -154,12 +158,137 @@ class Numfinity:
         """
         return float(str(self))
 
+    def is_zero(self):
+        """
+        (Numfinity) -> bool
+        Check if the Numfinity object is equal to 0.0.
+        """
+        # If there is only one element in each list and the numbers on those elements are equal to 0...
+        if (
+            len(self.integralPart) + len(self.decimalPart) == 2
+            and self.integralPart[0] + self.decimalPart[0] == "00"
+        ):
+            return True
+        else:
+            return False
+
+    ### COMPARATORS
+
     def __eq__(self, other):
         """
-        (Numfinity, Numfinity) -> bool
-        Compare 2 Numfinity objects.
+        (Numfinity, ?) -> bool
+        Compare if 2 objects are equal.
         """
-        return str(self) == str(other)
+        if isinstance(other, Numfinity) or isinstance(other, float):
+            return str(self) == str(other)
+
+        elif isinstance(other, int):
+            return str(self) == str(other) + ".0"
+
+        elif isinstance(other, str):
+            return str(self) == other
+
+        else:
+            return NotImplemented
+
+    def __ne__(self, other):
+        """
+        (Numfinity, ?) -> bool
+        Compare if 2 objects are not equal.
+        """
+        if self == other:
+            return False
+        else:
+            return True
+
+    def comparator(self, other):
+        """
+        (Numfinity, Numfinity) -> int
+        Compares two Numfinity objects
+        """
+        if isinstance(other, Numfinity):
+
+            if self.negative == False and other.negative == True:
+                return 1
+
+            elif self.negative == True and other.negative == False:
+                return -1
+
+            else:
+
+                dif = self - other
+
+                if dif.is_zero():
+                    return 0
+
+                # If the diference of both numbers is positive and both numbers are positive,
+                # which means the first positive number is greater than the second positive number...
+                elif (
+                    dif.negative == False
+                    and not (self.negative)
+                    or dif.negative == True
+                    and self.negative
+                ):
+                    return 1
+
+                # If the diference of both numbers is negative and both numbers are positive
+                # which means the first negative number is greater than the second negative number...
+                elif (
+                    dif.negative == True
+                    and not (self.negative)
+                    or dif.negative == False
+                    and self.negative
+                ):
+                    return -1
+
+        else:
+            return NotImplemented
+
+    def __lt__(self, other):
+        """
+        (Numfinity, ?) -> bool
+        Compare if one object is lesser than the other
+        """
+        result = self.comparator(other)
+        if result == -1:
+            return True
+        else:
+            return False
+
+    def __le__(self, other):
+        """
+        (Numfinity, ?) -> bool
+        Compare if one object is lesser or equal than the other
+        """
+        result = self.comparator(other)
+        if result == -1 or result == 0:
+            return True
+        else:
+            return False
+
+    def __gt__(self, other):
+        """
+        (Numfinity, ?) -> bool
+        Compare if one object is greater than the other
+        """
+        result = self.comparator(other)
+        if result == 1:
+            return True
+        else:
+            return False
+
+    def __ge__(self, other):
+        """
+        (Numfinity, ?) -> bool
+        Compare if one object is greater or equal than the other
+        """
+        result = self.comparator(other)
+        if result == 1 or result == 0:
+            return True
+        else:
+            return False
+
+    ### COMPARATORS
 
     def __add__(self, other):
         """
@@ -209,7 +338,12 @@ class Numfinity:
         substract 2 objects. (WIP)
         """
         if isinstance(other, Numfinity):
-            return NotImplemented  # TODO: support for this
+            another = Numfinity(not (other.negative))
+            another.integralPart = other.integralPart.copy()
+            another.decimalPart = other.decimalPart.copy()
+            another.original = other.original
+
+            return self + another
 
         elif isinstance(other, float) or isinstance(other, int):
             return NotImplemented  # TODO: support for this
@@ -274,18 +408,16 @@ class Numfinity:
         referenceIndex = len(self.integralPart)
 
         # if positive + positive
-        if not(self.negative) and not(other.negative):
-            resultingList, referenceIndex = self.sumModule_(
-                other, referenceIndex)
+        if not (self.negative) and not (other.negative):
+            resultingList, referenceIndex = self.sumModule_(other, referenceIndex)
 
         # if negative + negative
         elif self.negative and other.negative:
             resultingSign = True
-            resultingList, referenceIndex = self.sumModule_(
-                other, referenceIndex)
+            resultingList, referenceIndex = self.sumModule_(other, referenceIndex)
 
         # if positive + negative
-        elif not(self.negative) and not(other.negative):
+        elif not (self.negative) and not (other.negative):
             # TODO: this - - - - -
             pass
 
@@ -345,8 +477,7 @@ class Numfinity:
             # If the sum was bigger than the element capacity
             elif len(sum) > 15:
                 # store it correctly
-                result[index - 1] = str(int(result[index - 1]
-                                            ) + int(sum[:-14]))
+                result[index - 1] = str(int(result[index - 1]) + int(sum[:-14]))
 
         return result, referenceIndex
 
@@ -357,13 +488,15 @@ class Numfinity:
         """
         for index in range(len(self.integralPart) - 1):
             if index != 0:
-                self.integralPart[index] = ("000000000000000" +
-                                            self.integralPart[index])[-15:]
+                self.integralPart[index] = (
+                    "000000000000000" + self.integralPart[index]
+                )[-15:]
 
         for index in range(len(self.decimalPart) - 1, -1, -1):
             if index != len(self.decimalPart) - 1:
-                self.decimalPart[index] = ("000000000000000" +
-                                           self.decimalPart[index])[-15:]
+                self.decimalPart[index] = ("000000000000000" + self.decimalPart[index])[
+                    -15:
+                ]
 
     def removeExtraZeros_(self):
         """

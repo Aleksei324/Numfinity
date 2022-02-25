@@ -1,6 +1,6 @@
 # Numfinity
 
-A work in progress of a a module for Python 3 with which you can create dynamically sized numbers; in other words, increase their maximum decimal or digit capacity to whatever is required.
+A work in progress of a module for Python 3 with which you can create dynamically sized numbers; in other words, increase their maximum decimal or digit capacity to whatever is required.
 
 You can create Numfinity objects in two ways, the standard way by specifying the sign, integral and decimal part, or by using a float/double (depending on the language). For now you can only add values with equal sign, either add with another Numfinity object or with a float.
 
@@ -20,7 +20,7 @@ Download the file "Numfinity.py" and import it using `from Numfinity import Numf
 
 `y.changeValue(50.0)` changes the Numfinity object's value to 50.0, using a float.
 
-`x == y` compare if both Numfinity objects are equal.
+`x == y` compares if both Numfinity objects are equal.
 
 `str(x)` return the string representation of the Numfinity object.
 
@@ -29,6 +29,10 @@ Download the file "Numfinity.py" and import it using `from Numfinity import Numf
 `x + y` return the addition (a new Numfinity object) of two Numfinity object.
 
 `x + 5.0` return the addition (a new Numfinity object) of the Numfinity object plus 5.0.
+
+`x.is_zero` checks if the Numfinity object is equal to zero.
+
+`x >= y` compares if x is greater or equal to y.
 
 ## Notes
 

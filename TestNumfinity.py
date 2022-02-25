@@ -63,13 +63,17 @@ class TestNumfinity(unittest.TestCase):
     def testChangeValueByPartLargeValues(self):
         """Testing the change of values with large values."""
         actual = nf(False, "09876543210987654321", "12345678901234567890")
-        actual = str(actual.changeValueByPart(
-            True,
-            "110100900800700600500400300200100",
-            "00100200300400500600700800900100110"))
+        actual = str(
+            actual.changeValueByPart(
+                True,
+                "110100900800700600500400300200100",
+                "00100200300400500600700800900100110",
+            )
+        )
         expected = (
-            "-110100900800700600500400300200100." +
-            "00100200300400500600700800900100110")
+            "-110100900800700600500400300200100."
+            + "00100200300400500600700800900100110"
+        )
         self.assertEqual(expected, actual)
 
     def testChangeValue(self):
@@ -106,6 +110,84 @@ class TestNumfinity(unittest.TestCase):
         object = nf()
         otherObject = nf(False, "5", "0")
         actual = object.changeValue(5.0) == otherObject
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def testCompareDiferentObjectsFloat(self):
+        """Test the comparation of diferent Numfinity objects and floats."""
+        object = nf(False, "0", "1")
+        otherObject = 5.2
+        actual = object == otherObject
+        expected = False
+        self.assertEqual(expected, actual)
+
+    def testCompareEqualObjectsFloat(self):
+        """Test the comparation of equal Numfinity objects and floats."""
+        object = nf(False, "5", "0")
+        otherObject = 5.0
+        actual = object == otherObject
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def testCompareDiferentObjects2(self):
+        """Test the comparation of diferent Numfinity objects."""
+        object = nf(False, "0", "1")
+        otherObject = nf(False, "5", "0")
+        actual = object != otherObject
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def testCompareEqualObjects2(self):
+        """Test the comparation of equal Numfinity objects."""
+        object = nf()
+        otherObject = nf(False, "5", "0")
+        actual = object.changeValue(5.0) != otherObject
+        expected = False
+        self.assertEqual(expected, actual)
+
+    def testCompareGreaterObject(self):
+        """Test the comparation of a greater Numfinity object."""
+        object = nf(False, "65", "0")
+        otherObject = nf(False, "5", "0")
+        actual = object > otherObject
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def testCompareLesserObject(self):
+        """Test the comparation of a lesser Numfinity object."""
+        object = nf(True, "65", "0")
+        otherObject = nf(False, "5", "0")
+        actual = object < otherObject
+        expected = True
+        self.assertEqual(expected, actual)
+
+    def testCompareGreaterOrEqualObject(self):
+        """Test the comparation of a greater or equal Numfinity object."""
+        object = nf(True, "65", "0")
+        otherObject = nf(False, "5", "0")
+        actual = object >= otherObject
+        expected = False
+        self.assertEqual(expected, actual)
+
+    #    def testCompareLesserOrEqualObject(self):
+    #        """Test the comparation of a lesser or equal Numfinity object."""
+    #        object = nf(False, "5", "0")
+    #        otherObject = nf(False, "5", "0")
+    #        actual = object <= otherObject
+    #        expected = True
+    #        self.assertEqual(expected, actual)
+
+    def testObjectIsNotZero(self):
+        """Test if the object is not equal to zero."""
+        object = nf(False, "5", "0")
+        actual = object.is_zero()
+        expected = False
+        self.assertEqual(expected, actual)
+
+    def testObjectIsZero(self):
+        """Test if the object is equal to zero."""
+        object = nf(False, "0", "0")
+        actual = object.is_zero()
         expected = True
         self.assertEqual(expected, actual)
 
